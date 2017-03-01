@@ -116,6 +116,11 @@ Add version number to js/css/image in HTML
         },
      
         /**
+         * Jade (Pug) templates support
+         */
+        'jade' : 0,
+     
+        /**
          * Output to config file
          */
         'output' : {
