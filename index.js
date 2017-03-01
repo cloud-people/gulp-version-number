@@ -125,7 +125,8 @@ function version(v) {
 module.exports = function (options) {
 
     var options = util._extend({
-        'value': '%TS%'
+        'value': '%TS%',
+        'jade': false
     }, options || {});
 
     var versionNumberList = {
@@ -204,9 +205,34 @@ module.exports = function (options) {
         return content;
     }
 
+    function html_regexp(type) {
+        var expressions = {
+            css: {
+                html: new RegExp(/<link [^>]*rel=['"]?stylesheet['"]?[^>]*>/g),
+                jade: new RegExp(/link[^(]*rel=['"]?stylesheet['"]?[^)]*>/g)
+            },
+            js: {
+                html: new RegExp(/<script [^>]*src=['"]?([^>'"]*)['"]?[^>]*>[^<]*<\/script>/g),
+                jade: new RegExp(/script[^(]*src=['"]?([^)'"]*)['"]?[^)]*)/g)
+            },
+            image: {
+                html: new RegExp(/<img [^>]*>/g),
+                jade: new RegExp(/img[^(]*)/g)
+            }
+        };
+
+        var template_type = 'html';
+
+        if (options.jade) {
+            template_type = 'jade';
+        }
+
+        return expressions[type][template_type];
+    }
+
     var appendto = {
         'css': function (content, k, v) {
-            var sts = content.match(/<link [^>]*rel=['"]?stylesheet['"]?[^>]*>/g);
+            var sts = content.match(html_regexp('css'));
             if (util.isArray(sts) && sts.length) {
                 for (var i = 0, len = sts.length; i < len; i++) {
                     var _RULE = sts[i].match(/href=['"]?([^>'"]*)['"]?/);
@@ -225,7 +251,7 @@ module.exports = function (options) {
             return content;
         },
         'js': function (content, k, v) {
-            var sts = content.match(/<script [^>]*src=['"]?([^>'"]*)['"]?[^>]*>[^<]*<\/script>/g);
+            var sts = content.match(html_regexp('js'));
             if (util.isArray(sts) && sts.length) {
                 for (var i = 0, len = sts.length; i < len; i++) {
                     var _RULE = sts[i].match(/src=['"]?([^>'"]*)['"]?/);
@@ -244,7 +270,7 @@ module.exports = function (options) {
             return content;
         },
         'image': function (content, k, v) {
-            var sts = content.match(/<img [^>]*>/g);
+            var sts = content.match(html_regexp('image'));
             if (util.isArray(sts) && sts.length) {
                 for (var i = 0, len = sts.length; i < len; i++) {
                     var _RULE = sts[i].match(/src=['"]?([^>'"]*)['"]?/);
