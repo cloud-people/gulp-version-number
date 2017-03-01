@@ -208,16 +208,16 @@ module.exports = function (options) {
     function html_regexp(type) {
         var expressions = {
             css: {
-                html: new RegExp(/<link [^>]*rel=['"]?stylesheet['"]?[^>]*>/g),
-                jade: new RegExp(/link[^(]*rel=['"]?stylesheet['"]?[^)]*>/g)
+                html: new RegExp('<link [^>]*rel=[\'"]?stylesheet[\'"]?[^>]*>', 'g'),
+                jade: new RegExp('link\\([^\\)]*rel=[\'"]?stylesheet[\'"]?[^\\)]*\\)', 'g')
             },
             js: {
-                html: new RegExp(/<script [^>]*src=['"]?([^>'"]*)['"]?[^>]*>[^<]*<\/script>/g),
-                jade: new RegExp(/script[^(]*src=['"]?([^)'"]*)['"]?[^)]*)/g)
+                html: new RegExp('<script [^>]*src=[\'"]?([^>\'"]*)[\'"]?[^>]*>[^<]*<\/script>', 'g'),
+                jade: new RegExp('script\\([^\\)]*src=[\'"]?([^\\)\'"]*)[\'"]?[^\\)]*\\)', 'g')
             },
             image: {
-                html: new RegExp(/<img [^>]*>/g),
-                jade: new RegExp(/img[^(]*)/g)
+                html: new RegExp('<img [^>]*>', 'g'),
+                jade: new RegExp('img\\([^\\)]*\\)', 'g')
             }
         };
 
@@ -230,12 +230,35 @@ module.exports = function (options) {
         return expressions[type][template_type];
     }
 
+    function element_regexp(type) {
+        var expressions = {
+            css: {
+                html: new RegExp('href=[\'"]?([^)\'"]*)[\'"]?'),
+                jade: new RegExp('href=[\'"]?([^>\'"]*)[\'"]?')
+            },
+            js: {
+                html: new RegExp('href=[\'"]?([^)\'"]*)[\'"]?'),
+                jade: new RegExp('src=[\'"]?([^>\'"]*)[\'"]?')
+            },
+            image: {
+                html: new RegExp('href=[\'"]?([^)\'"]*)[\'"]?'),
+                jade: new RegExp('src=[\'"]?([^>\'"]*)[\'"]?')
+            }
+        };
+
+        if (options.jade) {
+            return expressions[type]['jade'];
+        }
+
+        return expressions[type]['html'];
+    }
+
     var appendto = {
         'css': function (content, k, v) {
             var sts = content.match(html_regexp('css'));
             if (util.isArray(sts) && sts.length) {
                 for (var i = 0, len = sts.length; i < len; i++) {
-                    var _RULE = sts[i].match(/href=['"]?([^>'"]*)['"]?/);
+                    var _RULE = sts[i].match(element_regexp('css'));
                     if (_RULE[1]) {
                         var _UrlPs = parseURL(_RULE[1]);
                         var _Query = queryToJson(_UrlPs.query);
@@ -254,7 +277,7 @@ module.exports = function (options) {
             var sts = content.match(html_regexp('js'));
             if (util.isArray(sts) && sts.length) {
                 for (var i = 0, len = sts.length; i < len; i++) {
-                    var _RULE = sts[i].match(/src=['"]?([^>'"]*)['"]?/);
+                    var _RULE = sts[i].match(element_regexp('js'));
                     if (_RULE[1]) {
                         var _UrlPs = parseURL(_RULE[1]);
                         var _Query = queryToJson(_UrlPs.query);
@@ -273,7 +296,7 @@ module.exports = function (options) {
             var sts = content.match(html_regexp('image'));
             if (util.isArray(sts) && sts.length) {
                 for (var i = 0, len = sts.length; i < len; i++) {
-                    var _RULE = sts[i].match(/src=['"]?([^>'"]*)['"]?/);
+                    var _RULE = sts[i].match(element_regexp('image'));
                     if (_RULE[1]) {
                         var _UrlPs = parseURL(_RULE[1]);
                         var _Query = queryToJson(_UrlPs.query);
