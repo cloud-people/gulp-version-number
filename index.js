@@ -233,16 +233,16 @@ module.exports = function (options) {
     function element_regexp(type) {
         var expressions = {
             css: {
-                html: new RegExp('href=[\'"]?([^)\'"]*)[\'"]?'),
-                jade: new RegExp('href=[\'"]?([^>\'"]*)[\'"]?')
+                html: new RegExp('href=[\'"]?([^>\'"]*)[\'"]?'),
+                jade: new RegExp('href=[\'"]?([^)\'"]*)[\'"]?')
             },
             js: {
-                html: new RegExp('href=[\'"]?([^)\'"]*)[\'"]?'),
-                jade: new RegExp('src=[\'"]?([^>\'"]*)[\'"]?')
+                html: new RegExp('src=[\'"]?([^>\'"]*)[\'"]?'),
+                jade: new RegExp('src=[\'"]?([^)\'"]*)[\'"]?')
             },
             image: {
-                html: new RegExp('href=[\'"]?([^)\'"]*)[\'"]?'),
-                jade: new RegExp('src=[\'"]?([^>\'"]*)[\'"]?')
+                html: new RegExp('src=[\'"]?([^>\'"]*)[\'"]?'),
+                jade: new RegExp('src=[\'"]?([^)\'"]*)[\'"]?')
             }
         };
 
