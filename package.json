@@ -1,5 +1,5 @@
 {
-    "name": "@cloudpeople/gulp-version-number",
+    "name": "@heropa/gulp-version-number",
     "description": "Add version number to css/js/image... in HTML file.",
     "version": "5.6.0",
     "author": {
